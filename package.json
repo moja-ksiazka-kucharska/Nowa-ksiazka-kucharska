@@ -1,0 +1,36 @@
+{
+  "name": "recipe-scraper-app",
+  "version": "2.0.0",
+  "description": "Nowoczesna aplikacja do zbierania przepisów z automatycznym scrapingiem",
+  "main": "index.html",
+  "scripts": {
+    "start": "python -m http.server 8000",
+    "serve": "npx serve .",
+    "test": "echo \"Otwórz index.html w przeglądarce\"",
+    "build": "echo \"Brak potrzeby budowania - vanilla JS\""
+  },
+  "keywords": [
+    "przepisy",
+    "scraping",
+    "claude-ai",
+    "recipes",
+    "polish",
+    "kuchnia",
+    "javascript"
+  ],
+  "author": "Recipe Scraper Team",
+  "license": "MIT",
+  "dependencies": {},
+  "devDependencies": {},
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/your-username/recipe-scraper-app"
+  },
+  "bugs": {
+    "url": "https://github.com/your-username/recipe-scraper-app/issues"
+  },
+  "homepage": "https://your-username.github.io/recipe-scraper-app",
+  "engines": {
+    "node": ">=14.0.0"
+  }
+}

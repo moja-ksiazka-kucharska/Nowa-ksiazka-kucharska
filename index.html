@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Książka Kucharska - Scraper Przepisów</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <h1>📚 Książka Kucharska</h1>
+            <p class="header-subtitle">Zbieraj przepisy z ulubionych stron kulinarnych</p>
+        </header>
+
+        <!-- API Key Section -->
+        <div class="api-section card" id="apiSection">
+            <div class="card__header">
+                <h2>🔑 Klucz Claude API</h2>
+                <span class="status status--warning" id="apiStatus">Nie skonfigurowano</span>
+            </div>
+            <div class="card__body">
+                <div class="form-group">
+                    <label class="form-label" for="apiKey">
+                        Wprowadź swój klucz Claude API
+                        <small style="display: block; color: var(--color-text-secondary); margin-top: 4px;">
+                            Pobierz klucz z <a href="https://console.anthropic.com/" target="_blank">console.anthropic.com</a>
+                        </small>
+                    </label>
+                    <div class="flex gap-8">
+                        <input type="password" id="apiKey" class="form-control" placeholder="sk-ant-api03-..." style="flex: 1;">
+                        <button id="saveApiKey" class="btn btn--primary">Zapisz</button>
+                    </div>
+                </div>
+                <p class="api-note">
+                    ℹ️ Klucz jest przechowywany tylko w pamięci przeglądarki i nie jest zapisywany trwale.
+                </p>
+            </div>
+        </div>
+
+        <!-- Navigation -->
+        <nav class="navigation">
+            <button id="navRecipes" class="nav-btn active">📋 Przepisy</button>
+            <button id="navAdd" class="nav-btn">➕ Dodaj</button>
+            <button id="navTest" class="nav-btn">🧪 Test</button>
+        </nav>
+
+        <!-- Recipes Section -->
+        <section id="recipesSection" class="section">
+            <div class="section-header">
+                <h2>📋 Moje Przepisy</h2>
+                <div class="search-container">
+                    <div class="search-input-wrapper">
+                        <input type="text" id="searchInput" class="form-control" placeholder="Szukaj przepisów...">
+                        <span class="search-icon">🔍</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="recipes-grid" id="recipesGrid">
+                <!-- Recipes will be inserted here -->
+            </div>
+            
+            <div class="empty-state hidden" id="emptyState">
+                <div class="empty-state-icon">🍽️</div>
+                <h3>Brak przepisów</h3>
+                <p>Dodaj swój pierwszy przepis aby rozpocząć!</p>
+                <button class="btn btn--primary" onclick="document.getElementById('navAdd').click()">
+                    ➕ Dodaj przepis
+                </button>
+            </div>
+        </section>
+
+        <!-- Add Recipe Section -->
+        <section id="addSection" class="section hidden">
+            <div class="section-header">
+                <h2>➕ Dodaj Nowy Przepis</h2>
+            </div>
+
+            <!-- URL Extraction -->
+            <div class="card extraction-card">
+                <div class="card__header">
+                    <h3>🤖 Automatyczne wyodrębnianie</h3>
+                </div>
+                <div class="card__body">
+                    <div class="form-group">
+                        <label class="form-label" for="recipeUrl">URL przepisu:</label>
+                        <div class="flex gap-8">
+                            <input type="url" id="recipeUrl" class="form-control" placeholder="https://kwestiasmaku.com/przepis/..." style="flex: 1;">
+                            <button id="extractRecipe" class="btn btn--primary">
+                                <span class="btn-text">🚀 Wyodrębnij</span>
+                                <span class="btn-loading hidden">⌛</span>
+                            </button>
+                        </div>
+                        <small class="form-help">
+                            Obsługiwane strony: KwestiaSmaku.com, AniaGotuje.pl, AllRecipes.com i wiele innych
+                        </small>
+                    </div>
+                    <div class="extraction-status hidden" id="extractionStatus"></div>
+                </div>
+            </div>
+
+            <div class="divider">lub</div>
+
+            <!-- Manual Form -->
+            <div class="card">
+                <div class="card__header">
+                    <h3>📝 Wprowadź ręcznie</h3>
+                </div>
+                <div class="card__body">
+                    <form id="recipeForm">
+                        <div class="form-group">
+                            <label class="form-label" for="recipeName">Nazwa przepisu:</label>
+                            <input type="text" id="recipeName" class="form-control" placeholder="np. Kotlety schabowe" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label" for="prepTime">Czas przygotowania:</label>
+                            <input type="text" id="prepTime" class="form-control" placeholder="np. 30 min">
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label" for="ingredients">Składniki (jeden w każdej linii):</label>
+                            <textarea id="ingredients" class="form-control" rows="6" placeholder="500g mąki&#10;2 jajka&#10;300ml mleka" required></textarea>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label" for="instructions">Instrukcje (jeden krok w każdej linii):</label>
+                            <textarea id="instructions" class="form-control" rows="6" placeholder="Wymieszaj mąkę z jajkami&#10;Dodaj mleko i mieszaj&#10;Smaż na patelni" required></textarea>
+                        </div>
+
+                        <div class="form-actions">
+                            <button type="button" class="btn btn--secondary" id="clearForm">🗑️ Wyczyść</button>
+                            <button type="submit" class="btn btn--success">💾 Zapisz przepis</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </section>
+
+        <!-- Test Section -->
+        <section id="testSection" class="section hidden">
+            <div class="section-header">
+                <h2>🧪 Test Scrapera</h2>
+                <p>Przetestuj scraper na przykładowych przepisach</p>
+            </div>
+
+            <div class="card">
+                <div class="card__body">
+                    <button id="runTests" class="btn btn--primary btn--large">
+                        <span class="btn-text">🚀 Uruchom testy</span>
+                        <span class="btn-loading hidden">⌛</span>
+                    </button>
+                    <p class="mt-8 text-center text-muted">
+                        Test zostanie przeprowadzony na 4 przykładowych przepisach
+                    </p>
+                </div>
+            </div>
+
+            <div class="test-results hidden" id="testResults">
+                <!-- Test results will be inserted here -->
+            </div>
+        </section>
+
+        <!-- Recipe Modal -->
+        <div class="modal hidden" id="recipeModal">
+            <div class="modal-backdrop"></div>
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2 id="modalTitle">Szczegóły przepisu</h2>
+                    <button class="modal-close" id="closeModal">×</button>
+                </div>
+                <div class="modal-body" id="modalBody">
+                    <!-- Recipe details will be inserted here -->
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn--secondary" id="editRecipe">✏️ Edytuj</button>
+                    <button class="btn btn--danger" id="deleteRecipe">🗑️ Usuń</button>
+                    <button class="btn btn--primary" id="closeModalBtn">Zamknij</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Toast Notifications -->
+        <div class="toast-container" id="toastContainer"></div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
